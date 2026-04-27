@@ -175,10 +175,6 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    private fun musicPostDeleted() {
-        // Dummy function to trigger sync if needed
-    }
-
     private fun fetchMusicPosts() {
         db.getReference("music_posts").addValueEventListener(object : ValueEventListener {
             override fun onDataChange(s: DataSnapshot) {
@@ -234,16 +230,23 @@ class MainActivity : AppCompatActivity() {
         val uid = auth.currentUser!!.uid
         val postId = db.getReference("music_posts").push().key ?: return
         val extension = if (type == "audio") "mp3" else "mp4"
-        val ref = storage.reference.child("media/$postId.$extension")
+        val storageRef = storage.reference.child("media/$postId.$extension")
 
         val progressDialog = AlertDialog.Builder(this)
-            .setMessage("Uploading $type... Please wait.")
+            .setMessage("Uploading $type...")
             .setCancelable(false)
             .show()
 
-        ref.putFile(fileUri)
-            .addOnSuccessListener {
-                ref.downloadUrl.addOnSuccessListener { downloadUri ->
+        storageRef.putFile(fileUri)
+            .continueWithTask { task ->
+                if (!task.isSuccessful) {
+                    task.exception?.let { throw it }
+                }
+                storageRef.downloadUrl
+            }
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val downloadUri = task.result
                     db.getReference("users").child(uid).addListenerForSingleValueEvent(object : ValueEventListener {
                         override fun onDataChange(s: DataSnapshot) {
                             val user = s.getValue(User::class.java)
@@ -265,11 +268,10 @@ class MainActivity : AppCompatActivity() {
                         }
                         override fun onCancelled(e: DatabaseError) { progressDialog.dismiss() }
                     })
+                } else {
+                    progressDialog.dismiss()
+                    Toast.makeText(this, "Upload failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                 }
-            }
-            .addOnFailureListener { e ->
-                progressDialog.dismiss()
-                Toast.makeText(this, "Upload failed: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
 
