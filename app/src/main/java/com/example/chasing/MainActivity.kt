@@ -175,6 +175,10 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
+    private fun musicPostDeleted() {
+        // Dummy function to trigger sync if needed
+    }
+
     private fun fetchMusicPosts() {
         db.getReference("music_posts").addValueEventListener(object : ValueEventListener {
             override fun onDataChange(s: DataSnapshot) {

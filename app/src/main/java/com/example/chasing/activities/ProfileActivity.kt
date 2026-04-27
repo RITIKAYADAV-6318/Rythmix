@@ -56,7 +56,7 @@ class ProfileActivity : AppCompatActivity() {
                         if (user != null) {
                             profileName.text = user.name
                             profileCollegeId.text = "ID: ${user.collegeId}"
-                            profileRole.text = "Role: ${user.role.capitalize()}"
+                            profileRole.text = "Role: ${user.role.replace("_", " ").capitalize()}"
                             
                             // Load profile pic
                             if (user.profilePic.isNotEmpty()) {
@@ -99,7 +99,7 @@ class ProfileActivity : AppCompatActivity() {
         }
 
         if (userId != auth.currentUser?.uid) {
-            logoutBtn.visibility = android.view.View.GONE
+            logoutBtn.visibility = View.GONE
         }
 
         logoutBtn.setOnClickListener {
@@ -129,7 +129,8 @@ class ProfileActivity : AppCompatActivity() {
     private fun uploadImage() {
         if (imageUri != null) {
             val uid = auth.currentUser?.uid ?: return
-            val ref = storage.reference.child("profile_pics/$uid")
+            // 🔥 Added file extension .jpg to fix the "not at its place" error
+            val ref = storage.reference.child("profile_pics/$uid.jpg")
             
             Toast.makeText(this, "Uploading...", Toast.LENGTH_SHORT).show()
             
