@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Base Dark Pink Header -->
+    <item>
+        <shape>
+            <solid android:color="#AD1457"/>
+        </shape>
+    </item>
+
+    <!-- Header Shine Effect -->
+    <item>
+        <shape>
+            <gradient
+                android:type="linear"
+                android:angle="0"
+                android:startColor="#00FFFFFF"
+                android:centerColor="#30FFFFFF"
+                android:endColor="#00FFFFFF"/>
+        </shape>
+    </item>
+
+    <!-- Header Sparkles -->
+    <item android:left="20dp" android:top="10dp">
+        <shape android:shape="oval">
+            <size android:width="3dp" android:height="3dp"/>
+            <solid android:color="#FFFFFF"/>
+        </shape>
+    </item>
+    <item android:right="50dp" android:bottom="10dp">
+        <shape android:shape="oval">
+            <size android:width="2dp" android:height="2dp"/>
+            <solid android:color="#FFFFFF"/>
+        </shape>
+    </item>
+</layer-list>

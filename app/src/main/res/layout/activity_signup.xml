@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/crystal_bg"
+    android:gravity="center_horizontal">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Create Account"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        android:textColor="@color/primaryColor"
+        android:layout_marginBottom="32dp"/>
+
+    <EditText
+        android:id="@+id/signupName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Full Name"
+        android:background="@android:color/white"
+        android:padding="16dp"
+        android:layout_marginBottom="12dp"/>
+
+    <EditText
+        android:id="@+id/signupEmail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Email"
+        android:background="@android:color/white"
+        android:padding="16dp"
+        android:layout_marginBottom="12dp"/>
+
+    <EditText
+        android:id="@+id/signupCollegeId"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="College ID"
+        android:background="@android:color/white"
+        android:padding="16dp"
+        android:layout_marginBottom="12dp"/>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        app:passwordToggleEnabled="true"
+        app:passwordToggleTint="@color/primaryColor"
+        app:hintEnabled="false">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/signupPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Password"
+            android:inputType="textPassword"
+            android:background="@android:color/white"
+            android:padding="16dp"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <RadioGroup
+        android:id="@+id/signupRoleGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="24dp">
+
+        <RadioButton
+            android:id="@+id/signupStudentRadio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Student"
+            android:checked="true"/>
+
+        <RadioButton
+            android:id="@+id/signupSocietyRadio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Society Member" />
+
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/signupBtn"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:text="Join RythMix"
+        android:textAllCaps="false"
+        android:backgroundTint="@color/secondaryColor"
+        app:cornerRadius="8dp"/>
+
+</LinearLayout>

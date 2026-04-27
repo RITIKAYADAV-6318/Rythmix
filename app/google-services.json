@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "710528316500",
+    "project_id": "chasing-80f7f",
+    "storage_bucket": "chasing-80f7f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:710528316500:android:c9d35710abc869093c29c1",
+        "android_client_info": {
+          "package_name": "com.example.chasing"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAV1wsjvdNgLXlaHS7zEc715ZXKiGBKG9Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

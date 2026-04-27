@@ -1,0 +1,29 @@
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- Instagram Inspired Palette -->
+    <color name="primaryColor">#000000</color> <!-- Black header/text -->
+    <color name="primaryVariant">#000000</color>
+    <color name="secondaryColor">#0095F6</color> <!-- Instagram Blue -->
+
+    <color name="backgroundColor">#E6E6FA</color> <!-- Lavender Background -->
+    <color name="cardBackground">#FFFFFF</color>
+
+    <color name="textPrimary">#262626</color> <!-- IG Text Black -->
+    <color name="textSecondary">#8E8E8E</color> <!-- IG Text Gray -->
+
+    <!-- Shine & Gradient Effect -->
+    <color name="gradStart">#F58529</color> <!-- IG Orange -->
+    <color name="gradMid">#DD2A7B</color> <!-- IG Pink -->
+    <color name="gradEnd">#8134AF</color> <!-- IG Purple -->
+
+    <color name="tagColor">#00376B</color> <!-- Tagged user color -->
+
+    <!-- Swapped Chat Bubble Colors -->
+    <color name="chatMyBubble">#8134AF</color> <!-- My Message: Dark Purple (Insta) -->
+    <color name="chatOthersBubble">#F3E5F5</color> <!-- Others: Lightest Purple -->
+
+    <color name="headerDarkPink">#AD1457</color>
+    <color name="goldenWhite">#FFFDF0</color>
+</resources>

@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">RythMix</string>
+
+    <string name="clg_id">College ID</string>
+    <string name="password">Password</string>
+    <string name="student">Student</string>
+    <string name="society_member">Society Member</string>
+    <string name="login">Login</string>
+
+</resources>

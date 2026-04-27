@@ -1,0 +1,24 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="Theme.Chasing" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorPrimaryVariant">@color/primaryVariant</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/secondaryColor</item>
+        <item name="colorSecondaryVariant">@color/secondaryColor</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <item name="android:statusBarColor">@color/primaryVariant</item>
+
+        <!-- Style the overflow menu -->
+        <item name="actionOverflowMenuStyle">@style/CustomOverflowMenu</item>
+    </style>
+
+    <style name="CustomOverflowMenu" parent="Widget.AppCompat.Light.ActionButton.Overflow">
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+    </style>
+
+    <!-- Theme for the Popup itself -->
+    <style name="Theme.Chasing.PopupOverlay" parent="ThemeOverlay.AppCompat.Dark">
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:itemBackground">@color/black</item>
+    </style>
+</resources>

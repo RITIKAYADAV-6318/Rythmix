@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Create New Society"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="16dp"
+        android:textColor="@color/primaryColor"/>
+
+    <EditText
+        android:id="@+id/etSocName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Society Name"
+        android:inputType="textCapWords"
+        android:padding="12dp"
+        android:background="@android:color/white"
+        android:layout_marginBottom="12dp"/>
+
+    <EditText
+        android:id="@+id/etSocCollege"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="College Name"
+        android:inputType="textCapWords"
+        android:padding="12dp"
+        android:background="@android:color/white"
+        android:layout_marginBottom="12dp"/>
+
+    <EditText
+        android:id="@+id/etSocDesc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Description (What is this about?)"
+        android:inputType="textMultiLine"
+        android:minLines="3"
+        android:padding="12dp"
+        android:background="@android:color/white"/>
+
+</LinearLayout>

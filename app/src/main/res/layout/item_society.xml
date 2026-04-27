@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="4dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/tvSocietyName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Society Name"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/textPrimary"/>
+
+        <TextView
+            android:id="@+id/tvSocietyDesc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Society Description"
+            android:textColor="@color/textSecondary"
+            android:layout_marginTop="4dp"/>
+
+        <Button
+            android:id="@+id/btnJoinSociety"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Join Society"
+            android:layout_gravity="end"
+            android:layout_marginTop="12dp"
+            android:backgroundTint="@color/secondaryColor"
+            app:cornerRadius="8dp"/>
+
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

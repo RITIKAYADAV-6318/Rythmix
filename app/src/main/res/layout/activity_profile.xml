@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/crystal_bg"
+    android:gravity="center_horizontal">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardProfileImage"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        app:cardCornerRadius="60dp"
+        app:cardElevation="12dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="8dp"
+        android:clickable="true"
+        android:focusable="true">
+        <ImageView
+            android:id="@+id/profileImage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@android:drawable/ic_menu_gallery" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tap to change picture"
+        android:textSize="12sp"
+        android:textColor="@color/textSecondary"
+        android:layout_marginBottom="16dp"/>
+
+    <TextView
+        android:id="@+id/profileName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Name"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="@color/textPrimary"/>
+
+    <TextView
+        android:id="@+id/profileCollegeId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="College ID"
+        android:textSize="16sp"
+        android:textColor="@color/textSecondary"
+        android:layout_marginTop="4dp"/>
+
+    <TextView
+        android:id="@+id/profileRole"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Role"
+        android:textSize="14sp"
+        android:textColor="@color/secondaryColor"
+        android:textStyle="bold"
+        android:layout_marginTop="4dp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#DBDBDB"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="24dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="My Societies"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/textPrimary"
+        android:layout_gravity="start"/>
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="4dp">
+        <TextView
+            android:id="@+id/profileJoinedSocieties"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="Not joined any society yet"
+            android:textSize="16sp"
+            android:background="@android:color/white"
+            android:textColor="@color/textSecondary"/>
+    </com.google.android.material.card.MaterialCardView>
+
+    <Button
+        android:id="@+id/logoutBtn"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:text="Logout"
+        android:layout_marginTop="40dp"
+        android:backgroundTint="@color/primaryColor"
+        android:textColor="@color/white"
+        app:cornerRadius="8dp"/>
+
+</LinearLayout>
