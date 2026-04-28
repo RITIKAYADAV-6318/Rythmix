@@ -17,6 +17,7 @@ import com.example.chasing.models.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
+import java.io.InputStream
 
 class ProfileActivity : AppCompatActivity() {
 
@@ -68,7 +69,7 @@ class ProfileActivity : AppCompatActivity() {
                     override fun onCancelled(error: DatabaseError) {}
                 })
 
-            // 🔥 FIXED: Fetch actual Society NAMES instead of encrypted IDs
+            // RESOLVE SOCIETY NAMES: Fetch names instead of IDs
             db.getReference("users").child(userId).child("joinedSocieties")
                 .addValueEventListener(object : ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {
@@ -136,24 +137,32 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     private fun uploadImage() {
-        if (imageUri != null) {
-            val uid = auth.currentUser?.uid ?: return
-            
-            val progressDialog = AlertDialog.Builder(this)
-                .setMessage("Uploading Profile Picture...")
-                .setCancelable(false)
-                .show()
+        val uid = auth.currentUser?.uid ?: return
+        val uri = imageUri ?: return
 
-            // 🔥 Use a timestamp or keep it simple but ensure the path is solid
-            // Adding a small delay or ensuring metadata is handled can help with the "object not found" error
-            val storageRef = storage.reference.child("profile_pics/$uid.jpg")
+        val progressDialog = AlertDialog.Builder(this)
+            .setMessage("Uploading Profile Picture...")
+            .setCancelable(false)
+            .show()
+
+        try {
+            // 🛠️ USE INPUTSTREAM: High reliability for Android content URIs
+            val inputStream: InputStream? = contentResolver.openInputStream(uri)
+            if (inputStream == null) {
+                progressDialog.dismiss()
+                Toast.makeText(this, "Failed to read image file", Toast.LENGTH_SHORT).show()
+                return
+            }
+
+            // Reference with explicit timestamp to force cloud re-indexing
+            val ref = storage.reference.child("profile_pics/${uid}_${System.currentTimeMillis()}.jpg")
             
-            storageRef.putFile(imageUri!!)
+            ref.putStream(inputStream)
                 .continueWithTask { task ->
                     if (!task.isSuccessful) {
                         task.exception?.let { throw it }
                     }
-                    storageRef.downloadUrl
+                    ref.downloadUrl
                 }
                 .addOnCompleteListener { task ->
                     progressDialog.dismiss()
@@ -161,12 +170,15 @@ class ProfileActivity : AppCompatActivity() {
                         val downloadUri = task.result
                         db.getReference("users").child(uid).child("profilePic").setValue(downloadUri.toString())
                             .addOnSuccessListener {
-                                Toast.makeText(this, "Profile Picture Updated!", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(this, "Profile Updated Successfully!", Toast.LENGTH_SHORT).show()
                             }
                     } else {
                         Toast.makeText(this, "Upload failed: ${task.exception?.message}", Toast.LENGTH_LONG).show()
                     }
                 }
+        } catch (e: Exception) {
+            progressDialog.dismiss()
+            Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
 }

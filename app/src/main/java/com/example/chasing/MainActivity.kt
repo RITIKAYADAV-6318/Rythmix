@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.webkit.MimeTypeMap
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -33,6 +34,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
+import java.io.InputStream
 
 class MainActivity : AppCompatActivity() {
 
@@ -226,12 +228,17 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun getFileExtension(uri: Uri): String? {
+        val contentResolver = contentResolver
+        val mimeTypeMap = MimeTypeMap.getSingleton()
+        return mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(uri))
+    }
+
     private fun uploadMediaFile(fileUri: Uri, title: String, type: String) {
         val uid = auth.currentUser!!.uid
         val postId = db.getReference("music_posts").push().key ?: return
         
-        // 🛠️ Robust Storage Path: We use a simple path to avoid character issues
-        val extension = if (type == "audio") "mp3" else "mp4"
+        val extension = getFileExtension(fileUri) ?: (if (type == "audio") "mp3" else "mp4")
         val storageRef = storage.reference.child("media/$postId.$extension")
 
         val progressDialog = AlertDialog.Builder(this)
@@ -239,41 +246,56 @@ class MainActivity : AppCompatActivity() {
             .setCancelable(false)
             .show()
 
-        // 🔥 UPLOAD PROCESS
-        storageRef.putFile(fileUri)
-            .addOnSuccessListener { taskSnapshot ->
-                // Once upload is complete, get the download URL safely
-                taskSnapshot.metadata?.reference?.downloadUrl?.addOnSuccessListener { downloadUri ->
-                    db.getReference("users").child(uid).addListenerForSingleValueEvent(object : ValueEventListener {
-                        override fun onDataChange(s: DataSnapshot) {
-                            val user = s.getValue(User::class.java)
-                            val post = MusicPost(
-                                id = postId,
-                                userId = uid,
-                                userName = user?.name ?: "Artist",
-                                userProfilePic = user?.profilePic ?: "",
-                                title = title,
-                                fileUrl = downloadUri.toString(),
-                                fileType = type,
-                                timestamp = System.currentTimeMillis()
-                            )
-                            db.getReference("music_posts").child(postId).setValue(post)
-                                .addOnSuccessListener {
-                                    progressDialog.dismiss()
-                                    Toast.makeText(this@MainActivity, "Shared Successfully!", Toast.LENGTH_SHORT).show()
-                                }
-                        }
-                        override fun onCancelled(e: DatabaseError) { progressDialog.dismiss() }
-                    })
-                }?.addOnFailureListener {
-                    progressDialog.dismiss()
-                    Toast.makeText(this, "Failed to get download link", Toast.LENGTH_SHORT).show()
-                }
-            }
-            .addOnFailureListener { e ->
+        try {
+            // 🛠️ USE INPUTSTREAM: The most robust way to handle file data for Firebase Storage
+            val inputStream: InputStream? = contentResolver.openInputStream(fileUri)
+            if (inputStream == null) {
                 progressDialog.dismiss()
-                Toast.makeText(this, "Upload failed: ${e.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Failed to open selected file", Toast.LENGTH_SHORT).show()
+                return
             }
+
+            // 🔥 UPLOAD PROCESS using putStream and Task Chain
+            storageRef.putStream(inputStream)
+                .continueWithTask { task ->
+                    if (!task.isSuccessful) {
+                        task.exception?.let { throw it }
+                    }
+                    storageRef.downloadUrl
+                }
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        val downloadUri = task.result
+                        db.getReference("users").child(uid).addListenerForSingleValueEvent(object : ValueEventListener {
+                            override fun onDataChange(s: DataSnapshot) {
+                                val user = s.getValue(User::class.java)
+                                val post = MusicPost(
+                                    id = postId,
+                                    userId = uid,
+                                    userName = user?.name ?: "Artist",
+                                    userProfilePic = user?.profilePic ?: "",
+                                    title = title,
+                                    fileUrl = downloadUri.toString(),
+                                    fileType = type,
+                                    timestamp = System.currentTimeMillis()
+                                )
+                                db.getReference("music_posts").child(postId).setValue(post)
+                                    .addOnSuccessListener {
+                                        progressDialog.dismiss()
+                                        Toast.makeText(this@MainActivity, "Shared Successfully!", Toast.LENGTH_SHORT).show()
+                                    }
+                            }
+                            override fun onCancelled(e: DatabaseError) { progressDialog.dismiss() }
+                        })
+                    } else {
+                        progressDialog.dismiss()
+                        Toast.makeText(this, "Upload failed: ${task.exception?.message}", Toast.LENGTH_LONG).show()
+                    }
+                }
+        } catch (e: Exception) {
+            progressDialog.dismiss()
+            Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun showAddEventDialog() {
