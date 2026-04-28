@@ -46,7 +46,7 @@ class ProfileActivity : AppCompatActivity() {
         val userId = intent.getStringExtra("VIEW_USER_ID") ?: auth.currentUser?.uid
 
         if (userId != null) {
-            // Fetch profile data
+            // Fetch basic profile info
             db.getReference("users").child(userId)
                 .addValueEventListener(object : ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {
@@ -54,9 +54,8 @@ class ProfileActivity : AppCompatActivity() {
                         if (user != null) {
                             profileName.text = user.name
                             profileCollegeId.text = "ID: ${user.collegeId}"
-                            profileRole.text = "Role: ${user.role.replace("_", " ").capitalize()}"
+                            profileRole.text = "Role: ${user.role.replace("_", " ").uppercase()}"
                             
-                            // Load profile pic
                             if (user.profilePic.isNotEmpty()) {
                                 Glide.with(this@ProfileActivity)
                                     .load(user.profilePic)
@@ -69,27 +68,38 @@ class ProfileActivity : AppCompatActivity() {
                     override fun onCancelled(error: DatabaseError) {}
                 })
 
-            // Fetch joined societies
+            // 🔥 FIXED: Fetch actual Society NAMES instead of encrypted IDs
             db.getReference("users").child(userId).child("joinedSocieties")
                 .addValueEventListener(object : ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {
-                        val societies = mutableListOf<String>()
-                        for (socSnapshot in snapshot.children) {
-                            if (socSnapshot.value == true) {
-                                societies.add(socSnapshot.key?.replace("_", " ")?.capitalize() ?: "")
-                            }
-                        }
-                        if (societies.isNotEmpty()) {
-                            profileJoinedSocieties.text = societies.joinToString(", ")
-                        } else {
+                        val societyIds = snapshot.children.mapNotNull { it.key }
+                        if (societyIds.isEmpty()) {
                             profileJoinedSocieties.text = "Not joined any society yet"
+                            return
+                        }
+
+                        val namesList = mutableListOf<String>()
+                        var processedCount = 0
+                        for (socId in societyIds) {
+                            db.getReference("societies").child(socId).child("name")
+                                .get().addOnSuccessListener { nameSnap ->
+                                    nameSnap.getValue(String::class.java)?.let { namesList.add(it) }
+                                    processedCount++
+                                    if (processedCount == societyIds.size) {
+                                        profileJoinedSocieties.text = namesList.joinToString(", ")
+                                    }
+                                }.addOnFailureListener {
+                                    processedCount++
+                                    if (processedCount == societyIds.size) {
+                                        profileJoinedSocieties.text = namesList.joinToString(", ")
+                                    }
+                                }
                         }
                     }
                     override fun onCancelled(error: DatabaseError) {}
                 })
         }
 
-        // 🔥 Enable clicking on both image and its card container
         if (userId == auth.currentUser?.uid) {
             val clickListener = View.OnClickListener { chooseImage() }
             profileImage.setOnClickListener(clickListener)
@@ -130,19 +140,20 @@ class ProfileActivity : AppCompatActivity() {
             val uid = auth.currentUser?.uid ?: return
             
             val progressDialog = AlertDialog.Builder(this)
-                .setMessage("Updating Profile Picture...")
+                .setMessage("Uploading Profile Picture...")
                 .setCancelable(false)
                 .show()
 
-            // 🔥 Path with extension to ensure unique file recognition
-            val ref = storage.reference.child("profile_pics/$uid.jpg")
+            // 🔥 Use a timestamp or keep it simple but ensure the path is solid
+            // Adding a small delay or ensuring metadata is handled can help with the "object not found" error
+            val storageRef = storage.reference.child("profile_pics/$uid.jpg")
             
-            ref.putFile(imageUri!!)
+            storageRef.putFile(imageUri!!)
                 .continueWithTask { task ->
                     if (!task.isSuccessful) {
                         task.exception?.let { throw it }
                     }
-                    ref.downloadUrl
+                    storageRef.downloadUrl
                 }
                 .addOnCompleteListener { task ->
                     progressDialog.dismiss()

@@ -229,24 +229,21 @@ class MainActivity : AppCompatActivity() {
     private fun uploadMediaFile(fileUri: Uri, title: String, type: String) {
         val uid = auth.currentUser!!.uid
         val postId = db.getReference("music_posts").push().key ?: return
+        
+        // 🛠️ Robust Storage Path: We use a simple path to avoid character issues
         val extension = if (type == "audio") "mp3" else "mp4"
         val storageRef = storage.reference.child("media/$postId.$extension")
 
         val progressDialog = AlertDialog.Builder(this)
-            .setMessage("Uploading $type...")
+            .setMessage("Uploading $type... Please wait.")
             .setCancelable(false)
             .show()
 
+        // 🔥 UPLOAD PROCESS
         storageRef.putFile(fileUri)
-            .continueWithTask { task ->
-                if (!task.isSuccessful) {
-                    task.exception?.let { throw it }
-                }
-                storageRef.downloadUrl
-            }
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val downloadUri = task.result
+            .addOnSuccessListener { taskSnapshot ->
+                // Once upload is complete, get the download URL safely
+                taskSnapshot.metadata?.reference?.downloadUrl?.addOnSuccessListener { downloadUri ->
                     db.getReference("users").child(uid).addListenerForSingleValueEvent(object : ValueEventListener {
                         override fun onDataChange(s: DataSnapshot) {
                             val user = s.getValue(User::class.java)
@@ -268,10 +265,14 @@ class MainActivity : AppCompatActivity() {
                         }
                         override fun onCancelled(e: DatabaseError) { progressDialog.dismiss() }
                     })
-                } else {
+                }?.addOnFailureListener {
                     progressDialog.dismiss()
-                    Toast.makeText(this, "Upload failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Failed to get download link", Toast.LENGTH_SHORT).show()
                 }
+            }
+            .addOnFailureListener { e ->
+                progressDialog.dismiss()
+                Toast.makeText(this, "Upload failed: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
 
